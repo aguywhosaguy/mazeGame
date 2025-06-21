@@ -14,7 +14,7 @@ export class GhostComponent extends PlayerComponent implements OnStart {
 		super();
 	}
 	onStart() {
-		this.connectCanCollide();
+		this.canCollide(false);
 
 		this.instance.Humanoid.WalkSpeed = GHOST_WALKSPEED;
 		for (const child of this.instance.GetChildren()) {

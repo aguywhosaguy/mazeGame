@@ -13,7 +13,7 @@ export class TesterChatService implements OnStart {
 					if (!seed) {
 						seed = 0;
 					}
-					GeneratorSignal.Fire(seed);
+					//GeneratorSignal.Fire(seed);
 				}
 			});
 		});

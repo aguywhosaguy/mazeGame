@@ -88,7 +88,6 @@ export class PlayerComponent extends BaseComponent<Attributes, Char> implements 
 
 	canCollide(cc: boolean) {
 		if (!this.localCheck()) return;
-		print("Collide for " + this.player?.Name + " set to " + cc);
 		for (const wall of CollectionService.GetTagged("wall") as Array<Part>) {
 			wall.CanCollide = cc;
 		}

@@ -11,6 +11,12 @@ export const States = {
 
 type WallState = typeof States[keyof typeof States];
 
+const START_COOLDOWN = 30;
+const INTERMISSION_LENGTH = 15;
+
+const ROUND_LENGTH = 60 * 5;
+const HEADSTART = 30;
+
 @Service({})
 export class RoundService implements OnStart {
 	walls: Array<Part>;
@@ -28,8 +34,23 @@ export class RoundService implements OnStart {
 	}
 	onStart() {
 		Functions.getWallCollide.setCallback((player: Player) => this.getWalls(player));
-		wait(10);
-		this.roundStart();
+		wait(START_COOLDOWN);
+		for (;;) {
+			wait(1);
+			print(CollectionService.GetTagged("player").size());
+			if (this.started) {
+				if (CollectionService.GetTagged("player").size() === 0) {
+					this.roundEnd();
+				} else {
+					continue;
+				}
+			}
+			if (Players.GetChildren().size() < 2) continue;
+			this.intermission = true;
+			this.intermissionTime = os.time();
+			wait(INTERMISSION_LENGTH);
+			task.spawn(() => this.roundStart());
+		}
 	}
 	setWalls(state: WallState) {
 		if (state === 0) {
@@ -60,13 +81,12 @@ export class RoundService implements OnStart {
 		return (
 			(player.HasTag("monster") && this.headStart) ||
 			(player.HasTag("player") && !this.headStart) ||
-			!this.started ||
-			player.HasTag("ghost")
+			!this.started
 		);
 	}
 	roundStart() {
 		if (this.started) return;
-		print("START");
+		this.intermission = false;
 		this.started = true;
 		this.headStart = true;
 		this.headStartTime = os.time();
@@ -82,16 +102,30 @@ export class RoundService implements OnStart {
 		wait(5);
 
 		this.setWalls(States.PlayersOnly);
-		wait(30);
+		wait(HEADSTART);
 		this.headStart = false;
 		this.roundStartTime = os.time();
 		const roundStartTime = this.roundStartTime;
-
-		this.setWalls(States.MonstersOnly);
-		wait(60 * 5);
 		if (this.started && roundStartTime === this.roundStartTime) {
-			this.roundEnd();
+			this.setWalls(States.MonstersOnly);
+			wait(ROUND_LENGTH);
+			if (this.started && roundStartTime === this.roundStartTime) {
+				this.roundEnd();
+			}
 		}
 	}
-	roundEnd() {}
+	roundEnd() {
+		for (const player of Players.GetChildren() as Array<Player>) {
+			for (const tag of player.GetTags()) {
+				player.RemoveTag(tag);
+			}
+			player.AddTag("player");
+			const humanoid = player.Character?.FindFirstChildOfClass("Humanoid");
+			if (humanoid) {
+				humanoid.Health = 0;
+			}
+			this.setWalls(States.Closed);
+			this.started = false;
+		}
+	}
 }
