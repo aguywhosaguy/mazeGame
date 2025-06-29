@@ -5,6 +5,7 @@ import { Context } from "@rbxts/gamejoy";
 import { ContextOptions } from "@rbxts/gamejoy/out/Definitions/Types";
 import { Events, Functions } from "client/network";
 import { ResetFOVSignal } from "client/signals";
+import { Tags } from "shared/tags";
 
 interface Attributes {}
 
@@ -88,7 +89,7 @@ export class PlayerComponent extends BaseComponent<Attributes, Char> implements 
 
 	canCollide(cc: boolean) {
 		if (!this.localCheck()) return;
-		for (const wall of CollectionService.GetTagged("wall") as Array<Part>) {
+		for (const wall of CollectionService.GetTagged(Tags.Wall) as Array<Part>) {
 			wall.CanCollide = cc;
 		}
 	}

@@ -2,6 +2,7 @@ import { Service, OnStart } from "@flamework/core";
 import { CollectionService, Players } from "@rbxts/services";
 import { Events, Functions } from "server/network";
 import { GeneratorSignal } from "server/signals";
+import { monsters, Tags } from "shared/tags";
 
 export const States = {
 	Closed: 0,
@@ -30,16 +31,16 @@ export class RoundService implements OnStart {
 	roundStartTime: number = 0;
 
 	constructor() {
-		this.walls = CollectionService.GetTagged("wall") as Array<Part>;
+		this.walls = CollectionService.GetTagged(Tags.Wall) as Array<Part>;
 	}
 	onStart() {
 		Functions.getWallCollide.setCallback((player: Player) => this.getWalls(player));
 		wait(START_COOLDOWN);
 		for (;;) {
 			wait(1);
-			print(CollectionService.GetTagged("player").size());
+			print(CollectionService.GetTagged(Tags.Player).size());
 			if (this.started) {
-				if (CollectionService.GetTagged("player").size() === 0) {
+				if (CollectionService.GetTagged(Tags.Player).size() === 0) {
 					this.roundEnd();
 				} else {
 					continue;
@@ -66,7 +67,7 @@ export class RoundService implements OnStart {
 				wall.Transparency = 0.5;
 				wall.BrickColor = new BrickColor("Light green (Mint)");
 			}
-			Events.setWallCollide.except(CollectionService.GetTagged("monster") as Array<Player>, false);
+			Events.setWallCollide.except(CollectionService.GetTagged(Tags.Monster) as Array<Player>, false);
 		} else if (state === 2) {
 			for (const wall of this.walls) {
 				wall.Material = Enum.Material.ForceField;
@@ -74,7 +75,7 @@ export class RoundService implements OnStart {
 				wall.BrickColor = new BrickColor("Really red");
 			}
 			Events.setWallCollide.broadcast(true);
-			Events.setWallCollide.except(CollectionService.GetTagged("player") as Array<Player>, false);
+			Events.setWallCollide.except(CollectionService.GetTagged(Tags.Monster) as Array<Player>, false);
 		}
 	}
 	getWalls(player: Player) {
@@ -94,8 +95,8 @@ export class RoundService implements OnStart {
 		GeneratorSignal.Fire(0);
 		const players = Players.GetChildren() as Array<Player>;
 		new Random().Shuffle(players);
-		players[0].AddTag("scary");
-		players[0].RemoveTag("player");
+		players[0].AddTag(Tags.Monsters.Stalker);
+		players[0].RemoveTag(Tags.Player);
 		const humanoid = players[0].Character?.FindFirstChildOfClass("Humanoid");
 		if (humanoid) humanoid.Health = 0;
 		this.setWalls(States.PlayersOnly);
@@ -119,7 +120,7 @@ export class RoundService implements OnStart {
 			for (const tag of player.GetTags()) {
 				player.RemoveTag(tag);
 			}
-			player.AddTag("player");
+			player.AddTag(Tags.Player);
 			const humanoid = player.Character?.FindFirstChildOfClass("Humanoid");
 			if (humanoid) {
 				humanoid.Health = 0;

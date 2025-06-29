@@ -9,6 +9,7 @@
         "@flamework/networking": "^1.3.1",
         "@rbxts/animation": "^2.1.0",
         "@rbxts/gamejoy": "^1.1.4",
+        "@rbxts/hotfusion": "^0.3.0-hotfusion.1",
         "@rbxts/signals": "^1.0.5",
       },
       "devDependencies": {
@@ -63,6 +64,8 @@
     "@rbxts/compiler-types": ["@rbxts/compiler-types@3.0.0-types.0", "", {}, "sha512-VGOHJPoL7+56NTatMGqQj3K7xWuzEV+aP4QD5vZiHu+bcff3kiTmtoadaF6NkJrmwfFAvbsd4Dg764ZjWNceag=="],
 
     "@rbxts/gamejoy": ["@rbxts/gamejoy@1.1.4", "", { "dependencies": { "@rbxts/bin": "^1.2.1", "@rbxts/rust-classes": "^0.11.1-dev-0b871c2", "@rbxts/services": "^1.2.0", "@rbxts/signal": "^1.0.3", "@rbxts/t": "^3.0.0" } }, "sha512-vzjIg9PpRfFDwu6fC/3pUf3tf7eNG8hzuYntDhZQr1Icz3JJqGroiu4koL42uLSd9mezR3tWNtYCGH3kuWSO1w=="],
+
+    "@rbxts/hotfusion": ["@rbxts/hotfusion@0.3.0-hotfusion.1", "", {}, "sha512-GqW5kUPC3bFL79orHSj45JIA1wOz6cC84tw3eHVj/cPz77XwvVGI2TeIP6KseRlXCCFIBh6cCDWxyFnawNmNgw=="],
 
     "@rbxts/jsnatives": ["@rbxts/jsnatives@1.1.5", "", { "dependencies": { "@rbxts/services": "^1.5.5" } }, "sha512-7S6pTDBaWRs5bVSE8RZpl2REgZbm6eBOfRSSZiyMvSBsebUAmthD/aZMC61dGaoP3OQqRPpTWwJQ1jgca9ojOQ=="],
 

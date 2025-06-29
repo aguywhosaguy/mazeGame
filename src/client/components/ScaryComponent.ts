@@ -5,25 +5,26 @@ import { Actions } from "@rbxts/gamejoy";
 import { PlayerComponent } from "./PlayerComponent";
 import { Events, Functions } from "client/network";
 import { ResetFOVSignal } from "client/signals";
+import { Tags } from "shared/tags";
 
 const { Action } = Actions;
 
 const FLASH_LENGTH = 5;
 const FLASH_FREQUENCY = 10;
 
-const LIGHT_RANGE = 18;
-const WALK_SPEED = 38;
+const LIGHT_RANGE = 15;
+const WALK_SPEED = 30;
 
 const CUTSCENE_LENGTH = 3;
 const CHASE_LENGTH = 12;
 const CHASE_DISTANCE = 20;
-const CHASE_SPEED = 60;
+const CHASE_SPEED = 75;
 
 const CHASE_COOLDOWN = 10;
 const E_COOLDOWN = 1;
 
 @Component({
-	tag: "scary",
+	tag: Tags.Monsters.Stalker,
 })
 export class ScaryComponent extends PlayerComponent implements OnStart {
 	chased: Player | undefined;
@@ -78,10 +79,10 @@ export class ScaryComponent extends PlayerComponent implements OnStart {
 	onTouch(part: BasePart) {
 		if (!this.chasing || !this.chased) return;
 		const character = part.FindFirstAncestorOfClass("Model");
-		if (!character || character.Name !== this.chased?.Character?.Name || !character.HasTag("player")) return;
+		if (!character || character.Name !== this.chased?.Character?.Name || !character.HasTag(Tags.Player)) return;
 		const humanoid = character.FindFirstChildOfClass("Humanoid");
 		if (!humanoid) return;
-		Events.setTag.fire(this.chased, "scary");
+		Events.setTag.fire(this.chased, Tags.Monsters.Stalker);
 
 		humanoid.Health = 0;
 		if (this.localCheck()) this.playSound("Jumpscare", true);
@@ -90,7 +91,7 @@ export class ScaryComponent extends PlayerComponent implements OnStart {
 
 	flash() {
 		const highlights = new Array<Highlight>();
-		for (const character of CollectionService.GetTagged("player")) {
+		for (const character of CollectionService.GetTagged(Tags.Player)) {
 			if (character.ClassName !== "Model") continue;
 
 			const torso = character.WaitForChild("Torso") as Part;
@@ -126,7 +127,7 @@ export class ScaryComponent extends PlayerComponent implements OnStart {
 		const character = ray.Instance.FindFirstAncestorOfClass("Model");
 		const player = Players.GetPlayerFromCharacter(character);
 
-		if (!character || !character.FindFirstChildOfClass("Humanoid") || !character.HasTag("player") || !player)
+		if (!character || !character.FindFirstChildOfClass("Humanoid") || !character.HasTag(Tags.Player) || !player)
 			return;
 
 		Events.triggerChase.fire(player);

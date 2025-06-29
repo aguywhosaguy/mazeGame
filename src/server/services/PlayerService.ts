@@ -2,6 +2,7 @@ import { Service, OnStart } from "@flamework/core";
 import { CollectionService, Players, ServerStorage, StarterPlayer, Workspace } from "@rbxts/services";
 import { Events } from "server/network";
 import { CharacterAddedSignal } from "server/signals";
+import { Tags } from "shared/tags";
 
 @Service({})
 export class PlayerService implements OnStart {
@@ -18,15 +19,15 @@ export class PlayerService implements OnStart {
 		player.AddTag("player");
 		const walls: Array<Part> = CollectionService.GetTagged("wall") as Array<Part>;
 		if (walls[0].BrickColor === new BrickColor("Really red")) {
-			player.RemoveTag("player");
-			player.AddTag("ghost");
+			player.RemoveTag(Tags.Player);
+			player.AddTag(Tags.Ghost);
 		}
 		player.CharacterAdded.Connect((character: Model) => {
 			for (const tag of player.GetTags()) {
 				character.AddTag(tag);
 			}
-			if (!character.HasTag("player")) player.AddTag("monster");
-			if (character.HasTag("scary") && !character.HasTag("morphed"))
+			if (!character.HasTag(Tags.Player)) player.AddTag(Tags.Monster);
+			if (character.HasTag(Tags.Monsters.Stalker) && !character.HasTag(Tags.Morphed))
 				this.morph(player, ServerStorage.Morphs.Monster);
 			CharacterAddedSignal.Fire(character);
 		});
@@ -38,7 +39,7 @@ export class PlayerService implements OnStart {
 		for (const tag of character.GetTags()) {
 			newMorph.AddTag(tag);
 		}
-		newMorph.AddTag("morphed");
+		newMorph.AddTag(Tags.Morphed);
 		newMorph.Name = character.Name;
 		player.Character = newMorph;
 		newMorph.Parent = Workspace;
